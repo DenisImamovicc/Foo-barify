@@ -10,6 +10,30 @@ function App() {
     setinputData(()=>input)
   }
 
+  function TextModifier(data) {
+    const wordCollection={}
+    const wordsRegex=/[A-Za-z\;:!?()"'%\-]+/gi
+    const textData=data.match(wordsRegex)
+ 
+    if (!data) {
+      return console.log("null data");
+    }
+      textData.forEach(word => {
+        //console.log(word);
+          if (wordCollection.hasOwnProperty(word)) {
+            wordCollection[word]=wordCollection[word]+1
+            //console.log("Add count");
+          }else{
+            Object.defineProperty(wordCollection, `${word}`, {
+              value:1,
+              writable: true
+            });
+            //console.log("Add property and count");
+          }
+      });
+      console.log(wordCollection);
+  }
+
 
   function HandleSubmit(event) {
     event.preventDefault()
@@ -17,9 +41,9 @@ function App() {
     // console.log(event.target[0].value);
   }
 
-  // useEffect(() => {
-  //   console.log(inputData);
-  // }, [inputData])
+   useEffect(() => {
+    TextModifier(inputData);
+   }, [inputData])
   
 
 
@@ -37,7 +61,6 @@ function App() {
       </Form>
       <h2 className='text-center'>Results:</h2>
       <Form.Control as="textarea" placeholder="" className='textarea' value={inputData} readOnly/>
-
     </div>
   );
 }
