@@ -11,27 +11,32 @@ function App() {
   }
 
   function TextModifier(data) {
-    const wordCollection={}
+    const wordCollection={};
     const wordsRegex=/[A-Za-z\;:!?()"'%\-]+/gi
     const textData=data.match(wordsRegex)
  
     if (!data) {
       return console.log("null data");
     }
-      textData.forEach(word => {
+        textData.forEach(word => {
         //console.log(word);
           if (wordCollection.hasOwnProperty(word)) {
             wordCollection[word]=wordCollection[word]+1
             //console.log("Add count");
           }else{
-            Object.defineProperty(wordCollection, `${word}`, {
+            Object.defineProperty(wordCollection, word, {
               value:1,
-              writable: true
+              writable: true,
+              enumerable:true
             });
             //console.log("Add property and count");
           }
       });
-      console.log(wordCollection);
+
+      //implement code for situation where no word is mentioned more than others.
+      const mostUsedWord=Object.keys(wordCollection).reduce((a, b) => wordCollection[a] > wordCollection[b] ? a : b)
+      console.log(wordCollection,mostUsedWord);
+
   }
 
 
@@ -48,7 +53,7 @@ function App() {
 
 
   return (
-    <div className="App">'
+    <div className="App">
     <h1 className='text-center'>Text-replacer</h1>
       <Form className="Form" onSubmit={HandleSubmit}>
           <Form.Label>Enter content of file here:</Form.Label>
