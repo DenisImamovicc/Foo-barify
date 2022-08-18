@@ -5,6 +5,7 @@ import { useState,useEffect } from 'react';
 
 function App() {
   const [inputData, setinputData] = useState("")
+  const [outputData, setoutputData] = useState("")
 
   function ChangeInputData(input) {
     setinputData(()=>input)
@@ -40,6 +41,7 @@ function App() {
       const outputRegexWord=`${mostUsedWord}`
       const re=new RegExp(outputRegexWord,"gi")
       const output = data.replace(re, `foo${outputRegexWord}bar`);  
+      setoutputData(()=>output)
       console.log(output);
   }
 
@@ -69,7 +71,7 @@ function App() {
         </Button>
       </Form>
       <h2 className='text-center'>Results:</h2>
-      <Form.Control as="textarea" placeholder="" className='textarea' value={inputData} readOnly/>
+      <Form.Control as="textarea" placeholder="" className='textarea' value={outputData} readOnly/>
     </div>
   );
 }
