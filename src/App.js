@@ -36,7 +36,11 @@ function App() {
       //implement code for situation where no word is mentioned more than others.
       const mostUsedWord=Object.keys(wordCollection).reduce((a, b) => wordCollection[a] > wordCollection[b] ? a : b)
       console.log(wordCollection,mostUsedWord);
-
+      
+      const outputRegexWord=`${mostUsedWord}`
+      const re=new RegExp(outputRegexWord,"gi")
+      const output = data.replace(re, `foo${outputRegexWord}bar`);  
+      console.log(output);
   }
 
 
