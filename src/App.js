@@ -13,7 +13,7 @@ function App() {
 
   function TextModifier(data) {
     const wordCollection={};
-    const wordsRegex=/[A-Za-z\;:!?()"'%\-]+/gi
+    const wordsRegex=/[A-Za-z\"'\-]+/gi
     const textData=data.match(wordsRegex)
  
     if (!data) {
@@ -35,7 +35,7 @@ function App() {
       });
 
       //implement code for situation where no word is mentioned more than others.
-      const mostUsedWord=Object.keys(wordCollection).reduce((a, b) => wordCollection[a] > wordCollection[b] ? a : b)
+      const mostUsedWord=Object.keys(wordCollection).reduce((a, b) => wordCollection[b] > wordCollection[a] ? b : a)
       console.log(wordCollection,mostUsedWord);
       
       const outputRegexWord=`${mostUsedWord}`
