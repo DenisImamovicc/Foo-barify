@@ -1,77 +1,64 @@
 import './App.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
-  const [inputData, setinputData] = useState("")
-  const [outputData, setoutputData] = useState("")
+  const [Text, setText] = useState({ preview: '', data: '' })
+  const [status, setStatus] = useState('')
 
-  function ChangeInputData(input) {
-    setinputData(()=>input)
+  // function ChangeInputData(input) {
+  //   setinputData(() => input)
+  // }
+
+  // function HandleSubmit(event) {
+  //   // event.preventDefault()
+  //   setinputData(event.target.files[0])
+  //   setIsFileUploaded(true)
+  // }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    let formData = new FormData()
+    formData.append('file', Text.data)
+    const response = await fetch('http://localhost:5000/Text', {
+      method: 'POST',
+      body: formData,
+    })
+    if (response) setStatus(response.statusText)
   }
 
-  function TextModifier(data) {
-    const wordCollection={};
-    const wordsRegex=/[A-Za-z\"'\-]+/gi
-    const textData=data.match(wordsRegex)
- 
-    if (!data) {
-      return console.log("null data");
+  const handleFileChange = (e) => {
+    const Text = {
+      preview: URL.createObjectURL(e.target.files[0]),
+      data: e.target.files[0],
     }
-        textData.forEach(word => {
-        //console.log(word);
-          if (wordCollection.hasOwnProperty(word)) {
-            wordCollection[word]=wordCollection[word]+1
-            //console.log("Add count");
-          }else{
-            Object.defineProperty(wordCollection, word, {
-              value:1,
-              writable: true,
-              enumerable:true
-            });
-            //console.log("Add property and count");
-          }
-      });
-
-      //implement code for situation where no word is mentioned more than others.
-      const mostUsedWord=Object.keys(wordCollection).reduce((a, b) => wordCollection[b] > wordCollection[a] ? b : a)
-      console.log(wordCollection,mostUsedWord);
-      
-      const outputRegexWord=`${mostUsedWord}`
-      const re=new RegExp(outputRegexWord,"gi")
-      const output = data.replace(re, `foo${outputRegexWord}bar`);  
-      setoutputData(()=>output)
-      console.log(output);
+    setText(Text)
   }
 
+  // useEffect(() => {
+  //   //TextModifier(inputData);
+  // }, [inputData])
 
-  function HandleSubmit(event) {
-    event.preventDefault()
-    ChangeInputData(event.target[0].value)
-    // console.log(event.target[0].value);
-  }
-
-   useEffect(() => {
-    TextModifier(inputData);
-   }, [inputData])
-  
-
+	// async function uploadFile() {
+  //   let formData = new FormData(); 
+  //   formData.append("fileupload", inputData);
+  //     await fetch('http://localhost:800/upload', {
+  //     method: "POST", 
+  //     body: formData
+  //   }); 
+  // }
 
   return (
     <div className="App">
-    <h1 className='text-center'>Text-replacer</h1>
-      <Form className="Form" onSubmit={HandleSubmit}>
-          <Form.Label>Enter content of file here:</Form.Label>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Control as="textarea" placeholder="" className='textarea'/>
-        </Form.Group>
-        <Button variant="primary" type="submit" value="submit">
-          Submit
-        </Button>
-      </Form>
+      <h1 className='text-center'>Text-replacer</h1>
+      <form onSubmit={handleSubmit}>
+        <input type='file' name='file' onChange={handleFileChange}></input>
+        <button type='submit'>Submit</button>
+      </form>
+      {status && <h4>{status}</h4>}
       <h2 className='text-center'>Results:</h2>
-      <Form.Control as="textarea" placeholder="" className='textarea' value={outputData} readOnly/>
+      <Form.Control as="textarea" placeholder="" className='textarea' value={"outputData"} readOnly />
     </div>
   );
 }
