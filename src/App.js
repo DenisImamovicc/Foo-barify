@@ -34,6 +34,7 @@ function App() {
       data: e.target.files[0],
     }
     setText(Text)
+    console.log(Text);
   }
 
   // useEffect(() => {

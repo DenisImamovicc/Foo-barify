@@ -3,10 +3,12 @@ const app = express()
 const port = 5000
 const cors = require('cors')
 const multer = require('multer')
+const fs= require("fs")
+app.use(cors())
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'SentText/')
+    cb(null, 'RecievedText/')
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname)
@@ -14,11 +16,13 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage })
-
-app.use(cors())
+const Latestfiles=fs.readdirSync(`RecievedText`)
 
 app.post('/Text', upload.single('file'), function (req, res) {
-  res.json({})
+    fs.readFile(`RecievedText/${Latestfiles[0]}`,"utf8",function(err,data){
+        console.log("Read file: "+ data);
+    })
+  res.json({status:200,message:"File has been recived sucessfully"})
 })
 
 app.listen(port, () => {
