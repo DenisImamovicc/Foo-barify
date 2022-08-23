@@ -3,7 +3,9 @@ const app = express()
 const port = 5000
 const cors = require('cors')
 const multer = require('multer')
-const fs = require("fs")
+//const fs = require("fs")
+const fs = require('fs-extra');
+
 // const mainFunc = require("./mainFunc.js")
 
 
@@ -20,8 +22,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-//Seem to call itself even tho i do not want it to,causes error when empty dir.
-function fileContent() {
+function postContent() {
     const readDir=fs.readdirSync(`RecievedText`, "utf8", function (err, data) {
         console.log("file: " + data);
         return data
@@ -31,16 +32,38 @@ function fileContent() {
         console.log("Dir empty :( " + data);
         return data
     })
-    fs.unlinkSync(`RecievedText/${readDir[0]}`)
+    fs.move(`RecievedText/${readDir[0]}`, "SentText/write.txt", { overwrite: true })
+  .then(() => console.log("File moved to the destination"+
+                          " folder successfully"))
+  .catch((e) => console.log(e));
+    //fs.unlinkSync(`RecievedText/${readDir[0]}`)
+    return textContent
+}
+
+function getContent() {
+    const readDir=fs.readdirSync(`SentText`, "utf8", function (err, data) {
+        console.log("file: " + data);
+        return data
+    })
+
+    const textContent=fs.readFileSync(`SentText/${readDir[0]}`, "utf8", function (err, data) {
+        console.log("Dir empty :( " + data);
+        return data
+    })
 
     return textContent
 }
 app.post('/Text', upload.single('file'), function (req, res) {
-    let text=fileContent()
+    let text=postContent()
     res.send(fooBarify(text)).status(200)
     // res.json({ status: 200, message: "File has been recived sucessfully" })
 })
-//console.log();
+
+app.get('/getmodifedfile',function (req, res) {
+    let text=getContent()
+    //console.log(text);
+    res.status(200).send({"text":fooBarify(text)})
+})
 
 app.listen(port, () => {
     console.log(`listening at http://localhost:${port}`)

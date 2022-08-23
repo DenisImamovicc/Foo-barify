@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 
 function App() {
   const [Text, setText] = useState({ preview: '', data: '' })
+  const [modifiedText, setmodifiedText] = useState("fuck you")
+
   const [status, setStatus] = useState('')
 
   // function ChangeInputData(input) {
@@ -26,7 +28,19 @@ function App() {
       body: formData,
     })
     if (response) setStatus(response.statusText)
+    fetchmodifieddata()
   }
+
+
+  const fetchmodifieddata = async()=>{
+  const fuck=await fetch('http://localhost:5000/getmodifedfile')
+    .then((response) => response.json())
+    .then((data) => {
+      return data.text
+    });
+    return setmodifiedText(fuck)
+  }
+
 
   const handleFileChange = (e) => {
     const Text = {
@@ -59,7 +73,7 @@ function App() {
       </form>
       {status && <h4>{status}</h4>}
       <h2 className='text-center'>Results:</h2>
-      <Form.Control as="textarea" placeholder="" className='textarea' value={"outputData"} readOnly />
+      <Form.Control as="textarea" placeholder="" className='textarea' value={modifiedText} readOnly />
     </div>
   );
 }
