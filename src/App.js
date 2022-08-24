@@ -8,12 +8,12 @@ function App() {
   const [status, setStatus] = useState('')
   const [isDisabled, setisDisabled] = useState(false)
 
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()
     formData.append('file', File.data)
     console.log(File.data.size);
-    if (File.data.size === 0) { return setStatus("Can not modify a empty file,please choose a non-empty file") }
     const response = await fetch('http://localhost:5000/Text', {
       method: 'POST',
       body: formData,
@@ -33,11 +33,17 @@ function App() {
   }
 
   const handleFileChange = (e) => {
+    const allowedFormatRegex=/(\.txt|\.rtf|\.md|\.file)$/i;
     const file = {
       data: e.target.files[0],
     }
-    console.log(file.data.type);
-    if (file.data.type === "text/plain") {
+    console.log(file.data);
+
+    if (file.data.size === 0) {
+      setisDisabled(true)
+      return setStatus("Can not modify a empty file,please choose a non-empty file")
+    }
+    if (allowedFormatRegex.test(file.data.name)) {
       console.log(file);
       setisDisabled(false)
       setStatus("Supported Text Format :)")
@@ -54,7 +60,6 @@ function App() {
         <input type='file' name='file' onChange={handleFileChange} required accept=".txt,.rtf,.md,.file"></input>
         <button type='submit' disabled={isDisabled}>Submit</button>
       </form>
-      <button id='Delete' onClick={() => setmodifiedFile("")} disabled={!isDisabled}>Delete</button>
       {status && <h4>{status}</h4>}
       <h2 className='text-center'>Results:</h2>
       <Form.Control as="textarea" placeholder="" className='textarea' value={modifiedFile} readOnly />
