@@ -1,23 +1,25 @@
 import './App.css';
 import Form from 'react-bootstrap/Form';
-import { useState} from 'react';
+import { useState } from 'react';
 
 function App() {
-  const [File, setFile] = useState({data: '' })
+  const [File, setFile] = useState({ data: '' })
   const [modifiedFile, setmodifiedFile] = useState("Modified text appears here after sucessful submit.")
   const [status, setStatus] = useState('')
+  const [isDisabled, setisDisabled] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()
     formData.append('file', File.data)
     console.log(File.data.size);
-    if (File.data.size===0) {return setStatus("Can not modify a empty file,please choose a non-empty file")}
+    if (File.data.size === 0) { return setStatus("Can not modify a empty file,please choose a non-empty file") }
     const response = await fetch('http://localhost:5000/Text', {
       method: 'POST',
       body: formData,
     })
     if (response) setStatus(response.statusText)
+    setisDisabled(true)
     fetchmodifiedData()
   }
 
@@ -34,8 +36,15 @@ function App() {
     const file = {
       data: e.target.files[0],
     }
-    setFile(file)
-    console.log(file);
+    console.log(file.data.type);
+    if (file.data.type === "text/plain") {
+      console.log(file);
+      setisDisabled(false)
+      setStatus("Supported Text Format :)")
+      return setFile(file)
+    }
+    setisDisabled(true)
+    return setStatus("Fileformat not supported.Only textformat files are allowed");
   }
 
   return (
@@ -43,8 +52,9 @@ function App() {
       <h1 className='text-center'>Text-replacer</h1>
       <form onSubmit={handleSubmit}>
         <input type='file' name='file' onChange={handleFileChange} required accept=".txt,.rtf,.md,.file"></input>
-        <button type='submit'>Submit</button>
+        <button type='submit' disabled={isDisabled}>Submit</button>
       </form>
+      <button id='Delete' onClick={() => setmodifiedFile("")} disabled={!isDisabled}>Delete</button>
       {status && <h4>{status}</h4>}
       <h2 className='text-center'>Results:</h2>
       <Form.Control as="textarea" placeholder="" className='textarea' value={modifiedFile} readOnly />

@@ -10,12 +10,8 @@
   align-items: flex-start;
 }
 
-.textarea{
-  min-width: 90vw;
-  min-height: 90vh;
-}
 
-.resultarea{
+.textarea{
 overflow-y:scroll;
 min-width: 90vw;
 min-height: 90vh;
