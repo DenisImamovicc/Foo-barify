@@ -42,7 +42,7 @@ function App() {
     <div className="App">
       <h1 className='text-center'>Text-replacer</h1>
       <form onSubmit={handleSubmit}>
-        <input type='file' name='file' onChange={handleFileChange} required accept=".txt,.rtf,.md"></input>
+        <input type='file' name='file' onChange={handleFileChange} required accept=".txt,.rtf,.md,.file"></input>
         <button type='submit'>Submit</button>
       </form>
       {status && <h4>{status}</h4>}
