@@ -1,68 +1,42 @@
 import './App.css';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 
 function App() {
-  const [Text, setText] = useState({ preview: '', data: '' })
-  const [modifiedText, setmodifiedText] = useState("fuck you")
-
+  const [File, setFile] = useState({data: '' })
+  const [modifiedFile, setmodifiedFile] = useState("Modified text appears here after sucessful submit.")
   const [status, setStatus] = useState('')
-
-  // function ChangeInputData(input) {
-  //   setinputData(() => input)
-  // }
-
-  // function HandleSubmit(event) {
-  //   // event.preventDefault()
-  //   setinputData(event.target.files[0])
-  //   setIsFileUploaded(true)
-  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()
-    formData.append('file', Text.data)
+    formData.append('file', File.data)
+    console.log(File.data.size);
+    if (File.data.size===0) {return setStatus("Can not modify a empty file,please choose a non-empty file")}
     const response = await fetch('http://localhost:5000/Text', {
       method: 'POST',
       body: formData,
     })
     if (response) setStatus(response.statusText)
-    fetchmodifieddata()
+    fetchmodifiedData()
   }
 
-
-  const fetchmodifieddata = async()=>{
-  const fuck=await fetch('http://localhost:5000/getmodifedfile')
-    .then((response) => response.json())
-    .then((data) => {
-      return data.text
-    });
-    return setmodifiedText(fuck)
+  const fetchmodifiedData = async () => {
+    const modifiedData = await fetch('http://localhost:5000/getmodifedfile')
+      .then((response) => response.json())
+      .then((data) => {
+        return data.text
+      });
+    return setmodifiedFile(modifiedData)
   }
-
 
   const handleFileChange = (e) => {
-    const Text = {
-      preview: URL.createObjectURL(e.target.files[0]),
+    const file = {
       data: e.target.files[0],
     }
-    setText(Text)
-    console.log(Text);
+    setFile(file)
+    console.log(file);
   }
-
-  // useEffect(() => {
-  //   //TextModifier(inputData);
-  // }, [inputData])
-
-	// async function uploadFile() {
-  //   let formData = new FormData(); 
-  //   formData.append("fileupload", inputData);
-  //     await fetch('http://localhost:800/upload', {
-  //     method: "POST", 
-  //     body: formData
-  //   }); 
-  // }
 
   return (
     <div className="App">
@@ -73,7 +47,7 @@ function App() {
       </form>
       {status && <h4>{status}</h4>}
       <h2 className='text-center'>Results:</h2>
-      <Form.Control as="textarea" placeholder="" className='textarea' value={modifiedText} readOnly />
+      <Form.Control as="textarea" placeholder="" className='textarea' value={modifiedFile} readOnly />
     </div>
   );
 }
