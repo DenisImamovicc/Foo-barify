@@ -1,12 +1,15 @@
 import './App.css';
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
-
+import ErrAlertMssg from './components/alert';
 function App() {
   const [File, setFile] = useState({ data: '' })
   const [modifiedFile, setmodifiedFile] = useState("Modified text appears here after sucessful submit.")
   const [status, setStatus] = useState('')
   const [isDisabled, setisDisabled] = useState(false)
+  const [show, setShow] = useState(false);
+
+
 
 
   const handleSubmit = async (e) => {
@@ -17,10 +20,18 @@ function App() {
     const response = await fetch('http://localhost:5000/Text', {
       method: 'POST',
       body: formData,
+    }).then((res) => {
+      setStatus(res.statusText)
+      setisDisabled(true)
+      fetchmodifiedData()
+    }).catch((err) => {
+      console.log(err);
+      setStatus("Server failed to process the file,please try again later")
+      setisDisabled(true)
+      setShow(()=>!show)
     })
-    if (response) setStatus(response.statusText)
-    setisDisabled(true)
-    fetchmodifiedData()
+    return response
+
   }
 
   const fetchmodifiedData = async () => {
@@ -28,12 +39,14 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         return data.text
+      }).catch((err) => {
+        console.log("Shit aint fetching", err);
       });
     return setmodifiedFile(modifiedData)
   }
 
   const handleFileChange = (e) => {
-    const allowedFormatRegex=/(\.txt|\.rtf|\.md|\.file)$/i;
+    const allowedFormatRegex = /(\.txt|\.rtf|\.md|\.file)$/i;
     const file = {
       data: e.target.files[0],
     }
@@ -55,12 +68,12 @@ function App() {
 
   return (
     <div className="App">
+      <ErrAlertMssg status={status} show={show} setShow={setShow}/>
       <h1 className='text-center'>Text-replacer</h1>
       <form onSubmit={handleSubmit}>
         <input type='file' name='file' onChange={handleFileChange} required accept=".txt,.rtf,.md,.file"></input>
         <button type='submit' disabled={isDisabled}>Submit</button>
       </form>
-      {status && <h4>{status}</h4>}
       <h2 className='text-center'>Results:</h2>
       <Form.Control as="textarea" placeholder="" className='textarea' value={modifiedFile} readOnly />
     </div>

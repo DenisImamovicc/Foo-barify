@@ -17,3 +17,8 @@ min-width: 90vw;
 min-height: 90vh;
 border:solid black 1px;
 }
+
+.alert{
+  width: 100vw;
+  text-align: center;
+}
