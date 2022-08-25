@@ -1,11 +1,16 @@
 import './App.css';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+
 import { useState } from 'react';
 import ErrAlertMssg from './components/alert';
 function App() {
   const [File, setFile] = useState({ data: '' })
   const [modifiedFile, setmodifiedFile] = useState("Modified text appears here after sucessful submit.")
   const [status, setStatus] = useState('')
+  const [errMssg, seterrMssg] = useState('')
+
   const [isDisabled, setisDisabled] = useState(false)
   const [show, setShow] = useState(false);
 
@@ -26,7 +31,7 @@ function App() {
       fetchmodifiedData()
     }).catch((err) => {
       console.log(err);
-      setStatus("Server failed to process the file,please try again later")
+      seterrMssg("Server failed to process the file,please try again later")
       setisDisabled(true)
       setShow(()=>!show)
     })
@@ -41,6 +46,9 @@ function App() {
         return data.text
       }).catch((err) => {
         console.log("Shit aint fetching", err);
+        seterrMssg("Client failed to get the modified file,please try again later")
+        setisDisabled(true)
+        setShow(()=>!show)
       });
     return setmodifiedFile(modifiedData)
   }
@@ -68,11 +76,15 @@ function App() {
 
   return (
     <div className="App">
-      <ErrAlertMssg status={status} show={show} setShow={setShow}/>
+      <ErrAlertMssg errMssg={errMssg} show={show} setShow={setShow}/>
       <h1 className='text-center'>Text-replacer</h1>
       <form onSubmit={handleSubmit}>
-        <input type='file' name='file' onChange={handleFileChange} required accept=".txt,.rtf,.md,.file"></input>
-        <button type='submit' disabled={isDisabled}>Submit</button>
+      <Form.Group controlId="formFile" className="mb-3">
+        <Form.Label>Insert file you want to modify</Form.Label>
+        <Form.Control className='mb-1' type='file' name='file' onChange={handleFileChange} required accept=".txt,.rtf,.md,.file"/>
+        <Form.Text id="passwordHelpBlock" muted>{status&&status}</Form.Text>
+        <Button type='submit' disabled={isDisabled} variant="outline-dark" className='Submitbttn'>Submit</Button>
+      </Form.Group>
       </form>
       <h2 className='text-center'>Results:</h2>
       <Form.Control as="textarea" placeholder="" className='textarea' value={modifiedFile} readOnly />
