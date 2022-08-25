@@ -59,7 +59,7 @@ function App() {
       data: e.target.files[0],
     }
     console.log(file.data);
-
+    setShow(()=>false)
     if (file.data.size === 0) {
       setisDisabled(true)
       return setStatus("Can not modify a empty file,please choose a non-empty file")
