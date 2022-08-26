@@ -93,9 +93,9 @@ const fooBarify = function (data) {
   console.log(wordCollection, mostUsedWord)
 
   const outputRegexWord = `${mostUsedWord}`
-  const re = new RegExp(outputRegexWord, 'gi')
+  const re = new RegExp("\\b"+outputRegexWord+"\\b", 'gi')
   const output = data.replace(re, `foo${outputRegexWord}bar`)
-  // console.log(output);
+   console.log(output);
   return output
 }
 // module.exports = { fileContent };
