@@ -68,7 +68,7 @@ app.listen(port, () => {
 
 const fooBarify = function (data) {
     const wordCollection = {};
-    const wordsRegex = /[A-Za-z\"'\-]+/gi
+    const wordsRegex = /[A-Za-z]+/ig
     // console.log(data);
     const textData = data.match(wordsRegex)
     if (data === undefined) {
@@ -90,7 +90,7 @@ const fooBarify = function (data) {
     });
 
     const mostUsedWord = Object.keys(wordCollection).reduce((a, b) => wordCollection[b] > wordCollection[a] ? b : a)
-    //console.log(wordCollection, mostUsedWord);
+    console.log(wordCollection, mostUsedWord);
 
     const outputRegexWord = `${mostUsedWord}`
     const re = new RegExp(outputRegexWord, "gi")
