@@ -42,8 +42,8 @@ function postContent() {
 }
 
 const validateFile = (request, res) => {
-    console.log(request.file.originalname);
-    if (allowedFormatRegex.test(request.file.originalname && request.file.size > 0)) {
+    console.log(request.file.size);
+    if (allowedFormatRegex.test(request.file.originalname) && request.file.size > 0) {
         console.log("Allowed format");
         text = postContent()
         return res.send("Post req succesful").status(200)
