@@ -8,6 +8,7 @@ const fs = require('fs-extra');
 
 // const mainFunc = require("./mainFunc.js")
 let text;
+const allowedFormatRegex = /(\.txt|\.rtf|\.md|\.file)$/i;
 
 app.use(cors())
 
@@ -23,33 +24,42 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 function postContent() {
-    const readDir=fs.readdirSync(`RecievedText`, "utf8", function (err, data) {
+    const readDir = fs.readdirSync(`RecievedText`, "utf8", function (err, data) {
         console.log("file: " + data);
         return data
     })
 
-    const textContent=fs.readFileSync(`RecievedText/${readDir[0]}`, "utf8", function (err, data) {
+    const textContent = fs.readFileSync(`RecievedText/${readDir[0]}`, "utf8", function (err, data) {
         console.log("Dir empty :( " + data);
         return data
     })
     fs.move(`RecievedText/${readDir[0]}`, "SentText/write.txt", { overwrite: true })
-  .then(() => console.log("File moved to the destination"+
-                          " folder successfully"))
-  .catch((e) => console.log(e));
+        .then(() => console.log("File moved to the destination" +
+            " folder successfully"))
+        .catch((e) => console.log(e));
     //fs.unlinkSync(`RecievedText/${readDir[0]}`)
     return textContent
 }
 
+const validateFile = (request, res) => {
+    console.log(request.file.originalname);
+    if (allowedFormatRegex.test(request.file.originalname && request.file.size > 0)) {
+        console.log("Allowed format");
+        text = postContent()
+        return res.send("Post req succesful").status(200)
+    } else {
+        console.log("not allowed format");
+        fs.unlink(`RecievedText/${fs.readdirSync(`RecievedText`)}`)
+        return res.send({status:400,mssg:"Illegitimate format!Stop it!!"}).status(400)
+    }
+}
+
 app.post('/Text', upload.single('file'), function (req, res) {
-    text=postContent()
-    res.send().status(200)
-    // res.json({ status: 200, message: "File has been recived sucessfully" })
+    validateFile(req, res)
 })
 
-app.get('/getmodifedfile',function (req, res) {
-
-    //console.log(text);
-    res.status(200).send({"text":fooBarify(text)})
+app.get('/getmodifedfile', function (req, res) {
+    res.status(200).send({ "text": fooBarify(text) })
 })
 
 app.listen(port, () => {
