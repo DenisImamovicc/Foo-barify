@@ -7,7 +7,7 @@ const multer = require('multer')
 const fs = require('fs-extra');
 
 // const mainFunc = require("./mainFunc.js")
-
+let text;
 
 app.use(cors())
 
@@ -40,27 +40,14 @@ function postContent() {
     return textContent
 }
 
-function getContent() {
-    const readDir=fs.readdirSync(`SentText`, "utf8", function (err, data) {
-        console.log("file: " + data);
-        return data
-    })
-
-    const textContent=fs.readFileSync(`SentText/${readDir[0]}`, "utf8", function (err, data) {
-        console.log("Dir empty :( " + data);
-        return data
-    })
-
-    return textContent
-}
 app.post('/Text', upload.single('file'), function (req, res) {
-    let text=postContent()
-    res.send(fooBarify(text)).status(200)
+    text=postContent()
+    res.send().status(200)
     // res.json({ status: 200, message: "File has been recived sucessfully" })
 })
 
 app.get('/getmodifedfile',function (req, res) {
-    let text=getContent()
+
     //console.log(text);
     res.status(200).send({"text":fooBarify(text)})
 })
