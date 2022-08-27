@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-function postContent () {
+function postContent() {
   const readDir = fs.readdirSync('RecievedText', 'utf8', function (err, data) {
     console.log('file: ' + data)
     return data
@@ -35,31 +35,37 @@ function postContent () {
   })
   fs.move(`RecievedText/${readDir[0]}`, 'SentText/write.txt', { overwrite: true })
     .then(() => console.log('File moved to the destination' +
-            ' folder successfully'))
+      ' folder successfully'))
     .catch((e) => console.log(e))
-    // fs.unlinkSync(`RecievedText/${readDir[0]}`)
+  // fs.unlinkSync(`RecievedText/${readDir[0]}`)
   return textContent
 }
 
 const validateFile = (request, res) => {
-  console.log(request.file.size)
+  console.log(allowedFormatRegex.test(request.file.originalname))
   if (allowedFormatRegex.test(request.file.originalname) && request.file.size > 0) {
-    console.log('Allowed format')
     text = postContent()
-    return res.send('Post req succesful').status(200)
-  } else {
-    console.log('not allowed format')
+  }else{
     fs.unlink(`RecievedText/${fs.readdirSync('RecievedText')}`)
-    return res.send({ status: 400, mssg: 'Illegitimate format!Stop it!!' }).status(400)
+    throw new Error('Validate file func detected faulty file and removed it from senttext folder.')
   }
 }
 
 app.post('/Text', upload.single('file'), function (req, res) {
-  validateFile(req, res)
+  try {
+    validateFile(req, res)
+    return res.status(200).send({text:'Post req succesful,processing file now.'})
+  } catch (error) {
+    return res.status(400).send({ text:'Illegitimate format!Please choose a non empty file with approved format.'})
+  }
 })
 
 app.get('/getmodifedfile', function (req, res) {
-  res.status(200).send({ text: fooBarify(text) })
+  try {
+    res.status(200).send({ text: fooBarify(text) })
+  } catch (error) {
+    res.status(400).send({ text:'Illegitimate format!Stopping get req'})
+  }
 })
 
 app.listen(port, () => {
@@ -93,9 +99,9 @@ const fooBarify = function (data) {
   console.log(wordCollection, mostUsedWord)
 
   const outputRegexWord = `${mostUsedWord}`
-  const re = new RegExp("\\b"+outputRegexWord+"\\b", 'gi')
+  const re = new RegExp("\\b" + outputRegexWord + "\\b", 'gi')
   const output = data.replace(re, `foo${outputRegexWord}bar`)
-   console.log(output);
+  console.log(output);
   return output
 }
 // module.exports = { fileContent };
