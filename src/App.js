@@ -18,7 +18,7 @@ function App () {
     const formData = new FormData()
     formData.append('file', File.data)
     console.log(File.data.size)
-    const response = await fetch('http://localhost:5000/Text', {
+    const response = await fetch('http://localhost:5000/file', {
       method: 'POST',
       body: formData
     }).then((res) => {
@@ -35,7 +35,7 @@ function App () {
   }
 
   const fetchmodifiedData = async () => {
-    const modifiedData = await fetch('http://localhost:5000/getmodifedfile')
+    const modifiedData = await fetch('http://localhost:5000/modifedfile')
       .then((response) => response.json())
       .then((data) => {
         return data.text
