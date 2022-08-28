@@ -19,22 +19,30 @@ function App() {
   }
 
   const handleFileChange = (e) => {
-    const allowedFormatRegex = /(\.txt|\.rtf|\.md|\.file)$/i
     const file = {
       data: e.target.files[0]
     }
+    if (file.data===undefined) {
+      return setClientFileStatus('Canceled file input🔙')
+    }
     setShowComponent(() => false)
+    return validateFile(file)
+  }
+
+  const validateFile = (file) =>{
+    const allowedFormatRegex = /(\.txt|\.rtf|\.md|\.file)$/i
+
     if (file.data.size === 0) {
       setDisableUserInput(true)
-      return setClientFileStatus('Can not modify a empty file,please choose a non-empty file')
+      return setClientFileStatus('Can not modify a empty file,please choose a non-empty file❌')
     }
     if (allowedFormatRegex.test(file.data.name)) {
       setDisableUserInput(false)
-      setClientFileStatus('Supported Text Format :)')
+      setClientFileStatus('Supported Text Format✔️')
       return setFile(file)
     }
     setDisableUserInput(true)
-    return setClientFileStatus('Fileformat not supported.Only textformat files are allowed')
+    return setClientFileStatus('Fileformat not supported.Only textformat files are allowed❌')
   }
 
   const sendUnmodifiedData = async (data) => {
@@ -47,7 +55,7 @@ function App() {
       fetchmodifiedData()
     }).catch((err) => {
       console.log(err)
-      seterrMssg('Server failed to process the file,please try again later')
+      seterrMssg('Server failed to process the file,please try again later❌')
       setDisableUserInput(true)
       setShowComponent(() => !showComponent)
     })
@@ -60,7 +68,7 @@ function App() {
         return data.text
       }).catch((err) => {
         console.log(err)
-        seterrMssg('Client failed to get the modified file,please try again later')
+        seterrMssg('Client failed to get the modified file,please try again later❌')
         setDisableUserInput(true)
         setShowComponent(() => !showComponent)
       })
