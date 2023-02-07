@@ -46,7 +46,7 @@ function App() {
   }
 
   const sendUnmodifiedData = async (data) => {
-    await fetch('http://localhost:5000/file', {
+    await fetch('https://foobarapi-denisimamovicc.vercel.app/file', {
       method: 'POST',
       body: data
     }).then((res) => {
@@ -62,7 +62,7 @@ function App() {
   }
 
   const fetchmodifiedData = async () => {
-    const modifiedData = await fetch('http://localhost:5000/modifedfile')
+    const modifiedData = await fetch('https://foobarapi-denisimamovicc.vercel.app/modifedfile')
       .then((response) => response.json())
       .then((data) => {
         return data.text
