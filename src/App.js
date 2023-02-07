@@ -10,7 +10,7 @@ function App() {
   const [errMssg, seterrMssg] = useState('')
   const [isDisabled, setDisableUserInput] = useState(false)
   const [showComponent, setShowComponent] = useState(false)
-  const API_ROUTE="https://foo-barify.vercel.app/"
+  const API_ROUTE="https://foobarapi.vercel.app/"
   const handleSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData()
