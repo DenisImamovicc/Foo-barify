@@ -10,7 +10,7 @@ function App() {
   const [errMssg, seterrMssg] = useState('')
   const [isDisabled, setDisableUserInput] = useState(false)
   const [showComponent, setShowComponent] = useState(false)
-
+  const API_ROUTE="https://foo-barify.vercel.app/"
   const handleSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData()
@@ -46,7 +46,7 @@ function App() {
   }
 
   const sendUnmodifiedData = async (data) => {
-    await fetch('https://foobarapi-denisimamovicc.vercel.app/file', {
+    await fetch(`${API_ROUTE}file`, {
       method: 'POST',
       body: data
     }).then((res) => {
@@ -62,7 +62,7 @@ function App() {
   }
 
   const fetchmodifiedData = async () => {
-    const modifiedData = await fetch('https://foobarapi-denisimamovicc.vercel.app/modifedfile')
+    const modifiedData = await fetch(`${API_ROUTE}modifedfile`)
       .then((response) => response.json())
       .then((data) => {
         return data.text
